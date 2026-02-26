@@ -19,6 +19,15 @@ body {
   }
 }
 
+/* Progress bar shimmer animation */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
+}
+.progress-shimmer {
+  animation: shimmer 2s linear infinite;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

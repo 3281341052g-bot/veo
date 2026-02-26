@@ -25,6 +25,7 @@ export default function GeneratePage() {
   const [imageMimeType, setImageMimeType] = useState<string>('');
   const [status, setStatus] = useState<IGenerationStatus>({ status: 'pending' });
   const [isGenerating, setIsGenerating] = useState(false);
+  const [startTime, setStartTime] = useState<number | null>(null);
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const stopPolling = useCallback(() => {
@@ -89,6 +90,7 @@ export default function GeneratePage() {
     if (!imageData && activeTab === 'image') return;
 
     setIsGenerating(true);
+    setStartTime(Date.now());
     setStatus({ status: 'processing' });
 
     try {
@@ -124,6 +126,7 @@ export default function GeneratePage() {
     stopPolling();
     setStatus({ status: 'pending' });
     setIsGenerating(false);
+    setStartTime(null);
   };
 
   return (
@@ -179,7 +182,7 @@ export default function GeneratePage() {
           </button>
 
           {status.status !== 'pending' && (
-            <GenerationStatus status={status} onReset={handleReset} />
+            <GenerationStatus status={status} onReset={handleReset} startTime={startTime} />
           )}
 
           {status.status === 'completed' && status.videoUrl && (
