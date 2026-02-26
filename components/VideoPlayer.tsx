@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 
 interface VideoPlayerProps {
   url: string;
@@ -8,7 +8,7 @@ interface VideoPlayerProps {
 
 export default function VideoPlayer({ url }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isBase64, _] = useState(() => !url.startsWith('http'));
+  const isBase64 = !url.startsWith('http');
 
   const src = isBase64 ? `data:video/mp4;base64,${url}` : url;
 

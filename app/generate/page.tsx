@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import PromptInput from '@/components/PromptInput';
 import ParameterPanel from '@/components/ParameterPanel';
 import ImageUploader from '@/components/ImageUploader';
@@ -25,14 +25,19 @@ export default function GeneratePage() {
   const [imageMimeType, setImageMimeType] = useState<string>('');
   const [status, setStatus] = useState<IGenerationStatus>({ status: 'pending' });
   const [isGenerating, setIsGenerating] = useState(false);
-  const [pollingInterval, setPollingInterval] = useState<NodeJS.Timeout | null>(null);
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const stopPolling = useCallback(() => {
-    if (pollingInterval) {
-      clearInterval(pollingInterval);
-      setPollingInterval(null);
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
     }
-  }, [pollingInterval]);
+  }, []);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => stopPolling();
+  }, [stopPolling]);
 
   const pollStatus = useCallback(
     async (operationName: string) => {
@@ -74,7 +79,7 @@ export default function GeneratePage() {
         }
       }, 5000);
 
-      setPollingInterval(interval);
+      pollingIntervalRef.current = interval;
     },
     [prompt, params, stopPolling]
   );

@@ -7,7 +7,10 @@ const auth = new GoogleAuth({
 export async function getAccessToken(): Promise<string> {
   const client = await auth.getClient();
   const token = await client.getAccessToken();
-  return token.token || '';
+  if (!token.token) {
+    throw new Error('Failed to obtain access token');
+  }
+  return token.token;
 }
 
 export async function generateVideo(request: Record<string, unknown>): Promise<string> {
